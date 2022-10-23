@@ -6,17 +6,15 @@ Odpowiednie testy integracyjne znajdują się w plikach AnimalTest oraz OptionsP
 Task 10
 Odpowiedz na pytanie: jak zaimplementować mechanizm, który wyklucza pojawienie się dwóch zwierząt w tym samym miejscu.
 
-Przykładowo możemy zaimplementować/użyć strukturę HashMap, gdzie kluczem będzie krotka ze współrzędnymi. Obiekt krotki
-możemy zaimplementować sami, pamiętając o zmodyfikowaniu funkcji hashCode() aby klucz został poprawnie zhashowany.
-Następnie gdy dane zwierzę osiągnie dany punkt, będziemy tworzyć nowy wpis, składający się z klucza krotki nowego pola,
-pamiętając o usunięciu wpisu z kluczem pozycji, na której zwierzę wcześniej się znajdowało. Za każdym razem, gdy
-będziemy wywoływać funkcję .move() będzie trzeba sprawdzić, czy istnieje w HashMap-ie klucz o nowej pozycji.
+Przykładowo, możemy dodać do klasy Animal statyczną i finalną (static final) HashMapę, gdzie kluczem będzie krotka ze współrzędnymi.
+Krotka może być np. w formacie stringa lub też możemy zaimplementować własną klasę imitującą krotkę. Następnie, gdy zwierze
+będzie korzystało z funkcji .move() najpierw będzie trzeba sprawdzić, czy nowe pole nie jest zajęte przez inne zwierzę.
+Gdy nie, to z HashMapy usuwany jest klucz ze starym polem i tworzony jest nowy wpis z nową pozycją, że jest zajęta.
 
-Drugą możliwością, ze względu na małą planszę, jest stworzenie tablicy 5x5 typu boolean, gdzie wartość true będzie
-oznaczać, że znajduje się tam zwierzę, a false, że pole jest puste. Gdy będziemy wywoływać .move() będzie trzeba
-sprawdzić, czy nowa pozycja nie ma przypadkiem wartości true. Jeżeli nie to usuwamy wartość true ze starego pola i
-ustawiamy wartość true na nowe pole.
- */
+Drugą możliwością, ze względu na małą planszę, jest zastąpienie HashMapy tablicą 5x5 typu boolean, gdzie wartość true
+będzie oznaczać, że znajduje się tam zwierzę, a false, że pole jest puste.
+
+*/
 
 public class World {
     public static void main(String[] args) {
