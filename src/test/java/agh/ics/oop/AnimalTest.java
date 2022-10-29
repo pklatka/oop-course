@@ -10,19 +10,19 @@ public class AnimalTest {
     @Test
     public void testAnimalOrientationNorth() {
         Animal testAnimal = new Animal();
-        assertEquals("heading=Północ, position=(2,2)", testAnimal.toString());
+        assertEquals("N", testAnimal.toString());
     }
 
     @Test
     public void testAnimalOrientationEast() {
         Animal testAnimal = new Animal();
         testAnimal.move(MoveDirection.RIGHT);
-        assertEquals("heading=Wschód, position=(2,2)", testAnimal.toString());
+        assertEquals("E", testAnimal.toString());
         testAnimal.move(MoveDirection.LEFT);
         testAnimal.move(MoveDirection.LEFT);
         testAnimal.move(MoveDirection.LEFT);
         testAnimal.move(MoveDirection.LEFT);
-        assertEquals("heading=Wschód, position=(2,2)", testAnimal.toString());
+        assertEquals("E", testAnimal.toString());
 
     }
 
@@ -31,12 +31,12 @@ public class AnimalTest {
         Animal testAnimal = new Animal();
         testAnimal.move(MoveDirection.RIGHT);
         testAnimal.move(MoveDirection.RIGHT);
-        assertEquals("heading=Południe, position=(2,2)", testAnimal.toString());
+        assertEquals("S", testAnimal.toString());
         testAnimal.move(MoveDirection.LEFT);
         testAnimal.move(MoveDirection.LEFT);
         testAnimal.move(MoveDirection.LEFT);
         testAnimal.move(MoveDirection.LEFT);
-        assertEquals("heading=Południe, position=(2,2)", testAnimal.toString());
+        assertEquals("S", testAnimal.toString());
     }
 
 
@@ -44,12 +44,12 @@ public class AnimalTest {
     public void testAnimalOrientationWest() {
         Animal testAnimal = new Animal();
         testAnimal.move(MoveDirection.LEFT);
-        assertEquals("heading=Zachód, position=(2,2)", testAnimal.toString());
+        assertEquals("W", testAnimal.toString());
         testAnimal.move(MoveDirection.RIGHT);
         testAnimal.move(MoveDirection.RIGHT);
         testAnimal.move(MoveDirection.RIGHT);
         testAnimal.move(MoveDirection.RIGHT);
-        assertEquals("heading=Zachód, position=(2,2)", testAnimal.toString());
+        assertEquals("W", testAnimal.toString());
     }
 
 
@@ -57,7 +57,7 @@ public class AnimalTest {
     public void testAnimalPositionOrientationNorth() {
         Animal testAnimal = new Animal();
         // Orientation - NORTH
-        
+
         Vector2d expectedForward1 = new Vector2d(2, 3);
         Vector2d expectedForward2 = new Vector2d(2, 4);
         Vector2d expectedBackward = new Vector2d(2, 3);
@@ -205,6 +205,7 @@ public class AnimalTest {
         testAnimal.move(MoveDirection.FORWARD);
         testAnimal.move(MoveDirection.FORWARD);
         testAnimal.move(MoveDirection.FORWARD);
+        System.out.println(testAnimal.getPosition());
         assertTrue(testAnimal.isAt(new Vector2d(4, 4)));
     }
 
