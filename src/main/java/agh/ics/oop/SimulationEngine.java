@@ -26,6 +26,7 @@ public class SimulationEngine implements IEngine {
     @Override
     public void run() {
         int n = animalsOrder.size();
+        System.out.println(map.toString());
 
         for (int i = 0; i < directionArray.length; i++) {
             animalsOrder.get(i % n).move(directionArray[i]);
@@ -37,12 +38,15 @@ public class SimulationEngine implements IEngine {
         // Using SwingMapVisualizer
         int n = animalsOrder.size();
         int simulationSpeed = 10; // Range: [1 - 10], 10 -> optimal
+
         // Cast map to RectangularMap
         if (map.getClass() != RectangularMap.class) {
             return;
         }
+        
         RectangularMap castMap = (RectangularMap) map;
-        SwingMapVisualizer s = new SwingMapVisualizer(castMap.dimensions().x + 1, castMap.dimensions().y + 1, animalsOrder);
+        Vector2d[] dimensions = castMap.getMapBounds();
+        SwingMapVisualizer s = new SwingMapVisualizer(dimensions[1].x - dimensions[0].x + 1, dimensions[1].y - dimensions[0].y + 1, animalsOrder);
 
         for (int i = 0; i < directionArray.length; i++) {
             Vector2d oldPosition = animalsOrder.get(i % n).getPosition();
