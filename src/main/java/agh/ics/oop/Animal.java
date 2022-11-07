@@ -1,11 +1,13 @@
 package agh.ics.oop;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class Animal {
     private MapDirection heading = MapDirection.NORTH;
     private Vector2d position;
     private IWorldMap map;
+    private final ArrayList<IPositionChangeObserver> observers = new ArrayList<>();
 
     public Animal() {
         this.map = new RectangularMap(4, 4);
@@ -63,6 +65,20 @@ public class Animal {
         return this.position.x == position.x && this.position.y == position.y;
     }
 
+    void addObserver(IPositionChangeObserver observer) {
+        observers.add(observer);
+    }
+
+    void removeObserver(IPositionChangeObserver observer) {
+        observers.remove(observer);
+    }
+
+    void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
+        for (IPositionChangeObserver observer : observers) {
+            observer.positionChanged(oldPosition, newPosition);
+        }
+    }
+
     public void move(MoveDirection direction) {
         // direction handling
         switch (direction) {
@@ -70,14 +86,15 @@ public class Animal {
             case LEFT -> heading = heading.previous();
             case FORWARD, BACKWARD -> {
                 // Simulate position change
-                Vector2d newPosition = new Vector2d(position.x, position.y);
+                Vector2d oldPosition = new Vector2d(position.x, position.y);
                 Vector2d unitVector = heading.toUnitVector();
                 if (direction == MoveDirection.BACKWARD) {
                     unitVector = unitVector.opposite();
                 }
-                newPosition = newPosition.add(unitVector);
-                if (map.canMoveTo(newPosition)) {
+
+                if (map.canMoveTo(oldPosition.add(unitVector))) {
                     position = position.add(unitVector);
+                    positionChanged(oldPosition, position);
                 }
             }
         }
