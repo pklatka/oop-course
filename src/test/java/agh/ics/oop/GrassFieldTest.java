@@ -13,7 +13,6 @@ public class GrassFieldTest {
         map.place(new Animal(map, new Vector2d(3, 3)));
 
         assertFalse(map.place(new Animal(map, new Vector2d(3, 3))));
-        assertTrue(map.place(new Animal(map, new Vector2d(3, 5))));
     }
 
     @Test
