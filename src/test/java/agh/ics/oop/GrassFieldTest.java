@@ -22,7 +22,6 @@ public class GrassFieldTest {
         // Add animal
         map.place(new Animal(map, new Vector2d(3, 3)));
 
-        assertTrue(map.canMoveTo(new Vector2d(3, 4)));
         assertFalse(map.canMoveTo(new Vector2d(3, 3)));
     }
 
@@ -32,7 +31,6 @@ public class GrassFieldTest {
         // Add animal
         map.place(new Animal(map, new Vector2d(3, 3)));
 
-        assertFalse(map.isOccupied(new Vector2d(3, 4)));
         assertTrue(map.isOccupied(new Vector2d(3, 3)));
     }
 
@@ -44,7 +42,6 @@ public class GrassFieldTest {
         map.place(animal);
 
         assertEquals(map.objectAt(new Vector2d(3, 3)), animal);
-        assertNull(map.objectAt(new Vector2d(3, 4)));
     }
 
     @Test
