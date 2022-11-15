@@ -9,18 +9,25 @@ public class GrassFieldTest {
     @Test
     public void testPlace() {
         IWorldMap map = new GrassField(10);
-        // Add animal
-        map.place(new Animal(map, new Vector2d(3, 3)));
 
-        assertFalse(map.place(new Animal(map, new Vector2d(3, 3))));
+        assertThrows(IllegalArgumentException.class, () -> {
+            // Add animal
+            map.place(new Animal(map, new Vector2d(3, 3)));
+            map.place(new Animal(map, new Vector2d(3, 3)));
+        });
+
+        if (!map.isOccupied(new Vector2d(3, 2))) {
+            assertTrue(map.place(new Animal(map, new Vector2d(3, 2))));
+        }
     }
 
     @Test
     public void testCanMoveTo() {
         IWorldMap map = new GrassField(10);
         // Add animal
-        map.place(new Animal(map, new Vector2d(3, 3)));
-
+        if (!map.isOccupied(new Vector2d(3, 3))) {
+            map.place(new Animal(map, new Vector2d(3, 3)));
+        }
         assertFalse(map.canMoveTo(new Vector2d(3, 3)));
     }
 
@@ -28,8 +35,9 @@ public class GrassFieldTest {
     public void testIsOccupied() {
         IWorldMap map = new GrassField(10);
         // Add animal
-        map.place(new Animal(map, new Vector2d(3, 3)));
-
+        if (!map.isOccupied(new Vector2d(3, 3))) {
+            map.place(new Animal(map, new Vector2d(3, 3)));
+        }
         assertTrue(map.isOccupied(new Vector2d(3, 3)));
     }
 
@@ -38,9 +46,10 @@ public class GrassFieldTest {
         IWorldMap map = new GrassField(10);
         // Add animal
         Animal animal = new Animal(map, new Vector2d(3, 3));
-        map.place(animal);
-
-        assertEquals(map.objectAt(new Vector2d(3, 3)), animal);
+        if (!map.isOccupied(new Vector2d(3, 3))) {
+            map.place(animal);
+            assertEquals(map.objectAt(new Vector2d(3, 3)), animal);
+        }
     }
 
     @Test
@@ -48,10 +57,14 @@ public class GrassFieldTest {
         IWorldMap map = new GrassField(10);
         // Add animal
         Animal animal1 = new Animal(map, new Vector2d(3, 3));
-        map.place(animal1);
+        if (!map.isOccupied(new Vector2d(3, 3))) {
+            map.place(animal1);
+        }
         Animal animal2 = new Animal(map, new Vector2d(1, 3));
+        if (!map.isOccupied(new Vector2d(1, 3))) {
+            map.place(animal2);
+        }
         animal2.move(MoveDirection.RIGHT);
-        map.place(animal2);
 
         System.out.println(map.toString());
     }

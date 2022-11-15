@@ -16,7 +16,7 @@ public class RectangularMap extends AbstractWorldMap {
         return animalHashMap.get(position);
     }
 
-    protected Vector2d[] getMapBounds() {
+    public Vector2d[] getMapBounds() {
         return new Vector2d[]{bottomLeftVector, topRightVector};
     }
 }

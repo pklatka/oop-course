@@ -5,11 +5,6 @@ import java.util.concurrent.ThreadLocalRandom;
 public class GrassField extends AbstractWorldMap {
 
     private final int noOfGrassFields;
-    private int minCoordinateOX = Integer.MAX_VALUE;
-    private int minCoordinateOY = Integer.MAX_VALUE;
-    private int maxCoordinateOX = Integer.MIN_VALUE;
-    private int maxCoordinateOY = Integer.MIN_VALUE;
-
 
     public GrassField(int noOfGrassFields) {
         this.noOfGrassFields = noOfGrassFields;
@@ -28,7 +23,7 @@ public class GrassField extends AbstractWorldMap {
                     ThreadLocalRandom.current().nextInt(0, (int) Math.sqrt(noOfGrassFields * 10) + 1)
             );
         } while (isOccupied(grassPosition));
-        updateMapBoundaries(grassPosition);
+        mapBoundaries.addPosition(grassPosition);
         grassHashMap.put(grassPosition, new Grass(grassPosition));
     }
 
@@ -51,26 +46,42 @@ public class GrassField extends AbstractWorldMap {
     }
 
     @Override
+    public boolean place(Animal animal) throws IllegalArgumentException {
+        // Check if there is grass on animal position
+        boolean wasGrassOnPosition = false;
+        if (grassHashMap.containsKey(animal.getPosition())) {
+            grassHashMap.remove(animal.getPosition());
+            mapBoundaries.removePosition(animal.getPosition());
+            wasGrassOnPosition = true;
+        }
+
+        if (canMoveTo(animal.getPosition())) {
+            animalHashMap.put(animal.getPosition(), animal);
+            mapBoundaries.addPosition(animal.getPosition());
+            animal.addObserver(this);
+
+            if (wasGrassOnPosition) {
+                addGrass();
+            }
+            return true;
+        }
+
+        throw new IllegalArgumentException("Can't move animal to position " + animal.getPosition());
+    }
+
+    @Override
     protected void updateAnimalPosition(Vector2d oldPosition, Vector2d newPosition) {
         super.updateAnimalPosition(oldPosition, newPosition);
-        updateMapBoundaries(newPosition);
 
         // Eat grass
         if (grassHashMap.containsKey(newPosition)) {
             grassHashMap.remove(newPosition);
+            mapBoundaries.removePosition(newPosition);
             addGrass();
         }
     }
 
-    private void updateMapBoundaries(Vector2d position) {
-        minCoordinateOX = Math.min(position.x, minCoordinateOX);
-        minCoordinateOY = Math.min(position.y, minCoordinateOY);
-        maxCoordinateOX = Math.max(position.x, maxCoordinateOX);
-        maxCoordinateOY = Math.max(position.y, maxCoordinateOY);
-    }
-
-    protected Vector2d[] getMapBounds() {
-        return new Vector2d[]{new Vector2d(minCoordinateOX, minCoordinateOY),
-                new Vector2d(maxCoordinateOX, maxCoordinateOY)};
+    public Vector2d[] getMapBounds() {
+        return mapBoundaries.getMapBounds();
     }
 }

@@ -12,7 +12,7 @@ public class RectangularMapTest {
         // Add animal
         map.place(new Animal(map, new Vector2d(3, 3)));
 
-        assertFalse(map.place(new Animal(map, new Vector2d(3, 3))));
+        assertThrows(IllegalArgumentException.class, () -> map.place(new Animal(map, new Vector2d(3, 3))));
         assertTrue(map.place(new Animal(map, new Vector2d(3, 5))));
     }
 
@@ -21,7 +21,6 @@ public class RectangularMapTest {
         IWorldMap map = new RectangularMap(10, 5);
         // Add animal
         map.place(new Animal(map, new Vector2d(3, 3)));
-
         assertTrue(map.canMoveTo(new Vector2d(3, 4)));
         assertFalse(map.canMoveTo(new Vector2d(3, 3)));
     }

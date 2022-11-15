@@ -5,6 +5,7 @@ import java.util.HashMap;
 public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObserver {
     protected final HashMap<Vector2d, Animal> animalHashMap = new HashMap<>();
     protected final HashMap<Vector2d, Grass> grassHashMap = new HashMap<>();
+    protected final MapBoundary mapBoundaries = new MapBoundary();
 
     protected Vector2d topRightVector;
     protected Vector2d bottomLeftVector;
@@ -14,6 +15,7 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
         Animal animal = animalHashMap.get(oldPosition);
         animalHashMap.remove(oldPosition);
         animalHashMap.put(newPosition, animal);
+        mapBoundaries.positionChanged(oldPosition, newPosition);
     }
 
     @Override
@@ -33,16 +35,18 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     }
 
     @Override
-    public boolean place(Animal animal) {
+    public boolean place(Animal animal) throws IllegalArgumentException {
         if (canMoveTo(animal.getPosition())) {
             animalHashMap.put(animal.getPosition(), animal);
+            mapBoundaries.addPosition(animal.getPosition());
             animal.addObserver(this);
             return true;
         }
-        return false;
+
+        throw new IllegalArgumentException("Can't move animal to position " + animal.getPosition());
     }
 
-    protected abstract Vector2d[] getMapBounds();
+    public abstract Vector2d[] getMapBounds();
 
     @Override
     public String toString() {

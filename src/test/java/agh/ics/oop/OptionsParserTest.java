@@ -3,6 +3,7 @@ package agh.ics.oop;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class OptionsParserTest {
 
@@ -30,7 +31,23 @@ public class OptionsParserTest {
                 MoveDirection.RIGHT,
         };
 
-        assertArrayEquals(expectedDirections, parser.parse(testDirections));
+
+        String[] testDirections2 = new String[]{
+                "f", "l", "right", "r", "b", "r"
+        };
+
+
+        MoveDirection[] expectedDirections2 = new MoveDirection[]{
+                MoveDirection.FORWARD,
+                MoveDirection.LEFT,
+                MoveDirection.RIGHT,
+                MoveDirection.RIGHT,
+                MoveDirection.BACKWARD,
+                MoveDirection.RIGHT,
+        };
+        
+        assertThrows(IllegalArgumentException.class, () -> parser.parse(testDirections));
+        assertArrayEquals(expectedDirections2, parser.parse(testDirections2));
     }
 
 }

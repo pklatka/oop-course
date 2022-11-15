@@ -1,12 +1,13 @@
 package agh.ics.oop;
 
 public class OptionsParser {
-    public MoveDirection[] parse(String[] strArr) {
+    public MoveDirection[] parse(String[] strArr) throws IllegalArgumentException {
 
         int moveDirectionArrLength = 0;
         for (String str : strArr) {
             switch (str) {
                 case "f", "forward", "b", "backward", "l", "left", "r", "right" -> moveDirectionArrLength += 1;
+                default -> throw new IllegalArgumentException(str + " is not legal move specification");
             }
         }
 
