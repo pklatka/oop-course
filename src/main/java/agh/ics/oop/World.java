@@ -5,6 +5,8 @@ package agh.ics.oop;
  * Uwaga: Rozwiązanie renderuje całą siatkę od nowa -> nie wydajne rozwiązanie, może zacinać aplikację
  *   dla np. obrazów z dużymi rozmiarami
  *
+ * Uwaga 2: Dodano Hashmapę do klasy GuiElementBox, aby szybciej ładować zdjęcia
+ *
  * */
 
 import agh.ics.oop.gui.App;

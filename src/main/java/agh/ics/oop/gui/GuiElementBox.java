@@ -11,18 +11,26 @@ import javafx.scene.layout.VBox;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.HashMap;
 
 public class GuiElementBox {
-    private Image image;
     private Label label;
     private VBox box;
+    // GuiElementBox is used in one thread -> no risk of concurrent access problems
+    public static HashMap<String, Image> images = new HashMap<>();
 
     public GuiElementBox(IMapElement element) throws FileNotFoundException {
         try {
-            String filePath = new File("").getAbsolutePath();
-            filePath = filePath.concat("/src/main/resources/");
-            image = new Image(new FileInputStream(filePath.concat(element.getImageResource())));
-            ImageView imageView = new ImageView(image);
+            ImageView imageView;
+            if (images.containsKey(element.getImageResource())) {
+                imageView = new ImageView(images.get(element.getImageResource()));
+            } else {
+                String filePath = new File("").getAbsolutePath();
+                filePath = filePath.concat("/src/main/resources/");
+                Image image = new Image(new FileInputStream(filePath.concat(element.getImageResource())));
+                images.put(element.getImageResource(), image);
+                imageView = new ImageView(image);
+            }
             imageView.setFitWidth(25);
             imageView.setFitHeight(25);
 

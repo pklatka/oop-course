@@ -10,9 +10,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class App extends Application {
@@ -46,6 +49,17 @@ public class App extends Application {
         simulationEngine.setDirectionArray(new OptionsParser().parse(args));
         Thread engineThread = new Thread(simulationEngine);
         engineThread.start();
+    }
+
+    private void setIcon(Stage stage) throws FileNotFoundException {
+        try {
+            String filePath = new File("").getAbsolutePath();
+            filePath = filePath.concat("/src/main/resources/");
+            Image image = new Image(new FileInputStream(filePath.concat("head_south.png")));
+            stage.getIcons().add(image);
+        } catch (FileNotFoundException e) {
+            throw new FileNotFoundException(e.getMessage());
+        }
     }
 
     public void start(Stage primaryStage) {
@@ -86,6 +100,13 @@ public class App extends Application {
 //                Math.min(1300, (mapBounds[1].y - mapBounds[0].y + 2) * (cellHeight + 1)));
         Scene scene = new Scene(scrollPane, 800, 800);
         primaryStage.setTitle("WorldMap");
+        try {
+            setIcon(primaryStage);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Platform.exit();
+            System.exit(0);
+        }
         primaryStage.setScene(scene);
         primaryStage.show();
     }
