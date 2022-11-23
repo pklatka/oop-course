@@ -3,29 +3,37 @@ package agh.ics.oop.gui;
 import agh.ics.oop.*;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
+
+import java.io.FileNotFoundException;
 
 public class App extends Application {
 
     private AbstractWorldMap map;
-
-    private Integer cellWidth = 20;
-    private Integer cellHeight = 20;
+    private Vector2d[] mapElementPositions;
+    private SimulationEngine simulationEngine;
+    private Integer cellWidth = 50;
+    private Integer cellHeight = 50;
     private Double borderWidth = 1.2;
+    private GridPane grid = new GridPane();
+    private Vector2d[] mapBounds;
 
     public void init() throws IllegalArgumentException {
         try {
             String[] args = getParameters().getRaw().toArray(new String[0]);
             MoveDirection[] directions = new OptionsParser().parse(args);
-            Vector2d[] positions = {new Vector2d(2, 2), new Vector2d(3, 4)};
+            this.mapElementPositions = new Vector2d[]{new Vector2d(2, 2), new Vector2d(3, 4)};
             this.map = new GrassField(10);
-            IEngine engine = new SimulationEngine(directions, map, positions);
+            this.simulationEngine = new SimulationEngine(map, mapElementPositions, directions, this, 1000);
+
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             Platform.exit();
@@ -33,34 +41,77 @@ public class App extends Application {
         }
     }
 
+    private void startAnimation(TextField textField) {
+        String[] args = textField.getText().split(" ");
+        simulationEngine.setDirectionArray(new OptionsParser().parse(args));
+        Thread engineThread = new Thread(simulationEngine);
+        engineThread.start();
+    }
 
     public void start(Stage primaryStage) {
+        mapBounds = map.getMapBounds();
+        grid.getColumnConstraints().add(new ColumnConstraints(cellWidth));
+        grid.getRowConstraints().add(new RowConstraints(cellHeight));
+        for (int x = 1; x <= mapBounds[1].x - mapBounds[0].x + 1; x++) {
+            grid.getColumnConstraints().add(new ColumnConstraints(cellWidth));
+        }
+        for (int y = 1; y <= mapBounds[1].y - mapBounds[0].y + 1; y++) {
+            grid.getRowConstraints().add(new RowConstraints(cellHeight));
+        }
 
+        renderGrid();
+
+        HBox guiInterface = new HBox(5);
+        guiInterface.setAlignment(Pos.CENTER);
+        guiInterface.setPadding(new Insets(10, 0, 0, 0));
+        Button animationStart = new Button("Start");
+        TextField animationMoves = new TextField();
+        animationStart.setOnAction((action) -> {
+            startAnimation(animationMoves);
+        });
+
+        guiInterface.getChildren().addAll(animationMoves, animationStart);
+
+        VBox mainContainer = new VBox();
+        mainContainer.setAlignment(Pos.CENTER);
+        mainContainer.getChildren().addAll(grid, guiInterface);
+
+        ScrollPane scrollPane = new ScrollPane(mainContainer);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setPadding(new Insets(20));
+
+        // Detect width of map and create scene with this value
+//        Scene scene = new Scene(grid, Math.min(1300, (mapBounds[1].x - mapBounds[0].x + 2) * (cellWidth + 1)),
+//                Math.min(1300, (mapBounds[1].y - mapBounds[0].y + 2) * (cellHeight + 1)));
+        Scene scene = new Scene(scrollPane, 800, 800);
+        primaryStage.setTitle("WorldMap");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    public void renderGrid() {
         String inlineStyle = "-fx-border-color: darkgray; " +
                 "-fx-min-width: " + cellWidth + ";" +
                 "-fx-min-height:" + cellHeight + ";";
 
-        GridPane grid = new GridPane();
+        grid.getChildren().clear();
 //        grid.setGridLinesVisible(true); // Replaced with custom inline-css because why not :)
+        grid.setAlignment(Pos.CENTER);
 
+        mapBounds = map.getMapBounds();
+
+        // For debug purposes
+//        System.out.println(map);
 
         // Iinitialize coordinates
         Label label = new Label("y/x");
         label.setAlignment(Pos.CENTER);
         label.setStyle(inlineStyle + "-fx-border-width:" + borderWidth + ";");
-        grid.getColumnConstraints().add(new ColumnConstraints(cellWidth));
-        grid.getRowConstraints().add(new RowConstraints(cellHeight));
         grid.add(label, 0, 0);
-
-
-        Vector2d[] mapBounds = map.getMapBounds();
-
-        // For debug purposes
-        System.out.println(map);
 
         Integer value = mapBounds[0].x;
         for (int x = 1; x <= mapBounds[1].x - mapBounds[0].x + 1; x++) {
-            grid.getColumnConstraints().add(new ColumnConstraints(cellWidth));
             label = new Label(value.toString());
             label.setStyle(inlineStyle + "-fx-border-width:" + borderWidth + " " + borderWidth + " " + borderWidth + " 0;");
             label.setAlignment(Pos.CENTER);
@@ -68,10 +119,8 @@ public class App extends Application {
             value += 1;
         }
 
-
         value = mapBounds[1].y;
         for (int y = 1; y <= mapBounds[1].y - mapBounds[0].y + 1; y++) {
-            grid.getRowConstraints().add(new RowConstraints(cellHeight));
             label = new Label(value.toString());
             label.setStyle(inlineStyle + "-fx-border-width: 0 " + borderWidth + " " + borderWidth + " " + borderWidth + ";");
             label.setAlignment(Pos.CENTER);
@@ -89,24 +138,23 @@ public class App extends Application {
                 Object object = map.objectAt(new Vector2d(xCoord, yCoord));
                 if (object == null) {
                     label = new Label(" ");
+                    label.setStyle(inlineStyle);
+                    grid.add(label, x, y);
                 } else {
-                    label = new Label(object.toString());
+                    try {
+                        IMapElement element = (IMapElement) object;
+                        GuiElementBox mapElement = new GuiElementBox(element);
+                        mapElement.getNode().setStyle(inlineStyle);
+                        mapElement.getNode().setAlignment(Pos.CENTER);
+                        grid.add(mapElement.getNode(), x, y);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
                 }
-                label.setStyle(inlineStyle);
-                label.setAlignment(Pos.CENTER);
-                grid.add(label, x, y);
                 xCoord += 1;
             }
             yCoord -= 1;
         }
-
-        grid.setAlignment(Pos.CENTER);
-        // Detect width of map and create scene with this value
-        Scene scene = new Scene(grid, Math.min(1300, (mapBounds[1].x - mapBounds[0].x + 2) * (cellWidth + 1)),
-                Math.min(1300, (mapBounds[1].y - mapBounds[0].y + 2) * (cellHeight + 1)));
-        primaryStage.setTitle("WorldMap");
-        primaryStage.setScene(scene);
-        primaryStage.show();
     }
 }
-    
+

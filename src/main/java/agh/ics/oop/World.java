@@ -1,25 +1,10 @@
 package agh.ics.oop;
 
-/*
- * Task 3
- * - Zbiory dla osi OX oraz OY są obiektami klasy TreeMap. Dlaczego nie TreeSet?
- *   Gdy na danej pozycji np. x jest więcej niż jeden obiekt, możemy zapisać sobie liczbę
- *   obiektów w danym punkcie. Gdy usuwamy obiekt z danej pozycji, odejmujemy liczbę obiektów
- *   jednocześnie nie usuwając pozycji z uporządkowanego zbioru.
- *   Gdybyśmy chcieli przechowywać obiekty typu Animal, to niestety gdyby użyta została metoda .move()
- *   to hash TreeMap/TreeSet nie zostałby zmieniony i zapamiętany byłby stan zwierzęcia sprzed użycia metody.
- *   Dobrym rozwiązaniem jest użycie Vector2d, tak jak w HashMapach dla obiektów klas Grass oraz Animal.
- * */
-
 
 /*
- * Uwaga: teraz przy dodawaniu zwierzaka na pole gdzie znajduje się trawa jest niemożliwe.
- *        Możliwe jest, że program może wyrzucić wyjątek, lecz ponowne uruchomienie powinno
- *        naprawić problem. Aby zmienić zachowanie należy odkomentować linię w metodzie place
- *        w klasie AbstractWorldMap. (poprawka: już błąd powinien być naprawiony)
+ * Uwaga: Rozwiązanie renderuje całą siatkę od nowa -> nie wydajne rozwiązanie, może zacinać aplikację
+ *   dla np. obrazów z dużymi rozmiarami
  *
- * Uwaga 2: w App linie mapy są napisane jako styl w css (dla poznania javafx) oraz wielkość sceny jest
- *          obliczania dynamicznie.
  * */
 
 import agh.ics.oop.gui.App;

@@ -29,7 +29,7 @@ public class SimulationEngineTest {
         };
         IWorldMap map = new RectangularMap(10, 5);
         Vector2d[] positions = {new Vector2d(2, 2), new Vector2d(3, 4)};
-        IEngine engine = new SimulationEngine(directions, map, positions);
+        IEngine engine = new SimulationEngine(map, positions, directions);
         engine.run();
 
         // Expected output:
@@ -90,7 +90,7 @@ public class SimulationEngineTest {
         };
         IWorldMap map = new RectangularMap(3, 3);
         Vector2d[] positions = {new Vector2d(1, 1)};
-        IEngine engine = new SimulationEngine(directions, map, positions);
+        IEngine engine = new SimulationEngine(map, positions, directions);
         engine.run();
 
         // Expected output:
@@ -145,7 +145,7 @@ public class SimulationEngineTest {
         };
         IWorldMap map = new RectangularMap(3, 3);
         Vector2d[] positions = {new Vector2d(1, 1)};
-        IEngine engine = new SimulationEngine(directions, map, positions);
+        IEngine engine = new SimulationEngine(map, positions, directions);
         engine.run();
 
         // Expected output:
@@ -228,7 +228,7 @@ public class SimulationEngineTest {
         };
         IWorldMap map = new RectangularMap(4, 4);
         Vector2d[] positions = {new Vector2d(2, 2)};
-        IEngine engine = new SimulationEngine(directions, map, positions);
+        IEngine engine = new SimulationEngine(map, positions, directions);
         engine.run();
 
         // Expected output:
