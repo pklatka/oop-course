@@ -75,6 +75,16 @@ public class SimulationEngine implements IEngine, Runnable {
     public void run() {
         int n = animalsOrder.size();
 
+        // Run default run function when no GUI observers
+        if (observers.size() == 0) {
+            System.out.println(map);
+            for (int i = 0; i < directionArray.length; i++) {
+                animalsOrder.get(i % n).move(directionArray[i]);
+                System.out.println(map);
+            }
+            return;
+        }
+
         try {
             dispatchAnimation();
             for (int i = 0; i < directionArray.length; i++) {
